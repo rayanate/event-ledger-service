@@ -96,6 +96,7 @@ docker compose down
 | `POST` | `/events` | Submit an event. Returns `201` (new), `200` (replay), or `429` (rate limited; max 5 req/s). |
 | `GET` | `/events/{id}` | Fetch a single event by id. `404` if not found. |
 | `GET` | `/events?account={accountId}` | List events for an account, sorted by `eventTimestamp`. |
+| `GET` | `/accounts/{accountId}/balance` | Proxy to account service; fetch current balance. Gateway's graceful-degradation path. |
 | `GET` | `/health` | Liveness/health check. |
 | `GET` | `/metrics` | Actuator metrics endpoint. |
 | `GET` | `/prometheus` | Prometheus scrape endpoint. |
@@ -147,6 +148,10 @@ Notable test coverage:
 - Validation, replay, and not-found behavior (`AccountControllerWebMvcTest`, `EventControllerWebMvcTest`)
 - Circuit breaker opening under repeated downstream failure, verified against a WireMock stub (`AccountServiceResiliencyIntegrationTest`)
 - Trace ID propagation from gateway to account service (`TracePropagationIntegrationTest`)
+- Gateway's balance proxy and graceful degradation when account service is down (`AccountBalanceProxyIntegrationTest`)
+- Rate limiting on POST /events with 429 response (`EventSubmissionRateLimitIntegrationTest`)
+- Service startup and initialization (`EventGatewayApplicationTests`, `AccountServiceApplicationTests`, `HealthEndpointIntegrationTest`)
+- Event idempotency race conditions and concurrent duplicate handling (`EventServiceTest`)
 
 ## Notes on Observability
 
@@ -157,6 +162,9 @@ Notable test coverage:
   - `gateway.account.apply.success`
   - `gateway.account.apply.failure`
   - `gateway.account.apply.circuit_open`
+  - `gateway.account.balance.success`
+  - `gateway.account.balance.failure`
+  - `gateway.account.balance.circuit_open`
 - Tracing is exported over OTLP HTTP using `management.otlp.tracing.endpoint` (defaults to `http://localhost:4318/v1/traces`).
 - In Docker Compose, traces are sent to Jaeger (`jaeger:4318`), and the Jaeger UI is available at `http://localhost:16686`.
 

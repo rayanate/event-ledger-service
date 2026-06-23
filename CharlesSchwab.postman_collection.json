@@ -353,8 +353,32 @@
             {
               "name": "Zero Amount",
               "request": {
-                "method": "GET",
-                "header": []
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"eventId\":\"bad2\",\"accountId\":\"acct-900\",\"type\":\"CREDIT\",\"amount\":0,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
               },
               "response": []
             },
@@ -457,8 +481,32 @@
             {
               "name": "Account Service Down Check",
               "request": {
-                "method": "GET",
-                "header": []
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"eventId\":\"evt-down-check\",\"accountId\":\"acct-900\",\"type\":\"CREDIT\",\"amount\":100,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
               },
               "response": []
             }
@@ -614,11 +662,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "localhost:8081/accounts/acct-900/balance",
+              "raw": "localhost:8080/accounts/acct-900/balance",
               "host": [
                 "localhost"
               ],
-              "port": "8081",
+              "port": "8080",
               "path": [
                 "accounts",
                 "acct-900",

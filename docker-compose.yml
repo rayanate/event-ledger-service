@@ -3,6 +3,9 @@ services:
     build:
       context: ./account-service
     container_name: account-service
+    depends_on:
+      jaeger:
+        condition: service_started
     environment:
       OTLP_TRACING_ENDPOINT: http://jaeger:4318/v1/traces
     ports:
