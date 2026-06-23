@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AppliedTransactionRepository extends JpaRepository<AppliedTransaction, String> {
     List<AppliedTransaction> findByAccountId(String accountId);
+
+    List<AppliedTransaction> findByAccountIdOrderByEventTimestampAsc(String accountId);
 }
