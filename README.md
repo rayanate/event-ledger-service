@@ -81,6 +81,12 @@ Stop services:
 docker compose down
 ```
 
+## Postman Collection
+
+- A ready-to-import collection is included at `CharlesSchwab.postman_collection.json`.
+- Import it into Postman to run the gateway and account-service requests without manually creating each call.
+- Default requests target local ports (`8080` for `event-gateway`, `8081` for `account-service`).
+
 ## API Quick Reference
 
 ### Gateway (`event-gateway`)
