@@ -92,7 +92,7 @@
 		<!-- Simulate the Account Service in tests (failures, header capture) -->
 		<dependency>
 			<groupId>org.wiremock</groupId>
-			<artifactId>wiremock</artifactId>
+			<artifactId>wiremock-standalone</artifactId>
 			<version>3.13.2</version>
 			<scope>test</scope>
 		</dependency>

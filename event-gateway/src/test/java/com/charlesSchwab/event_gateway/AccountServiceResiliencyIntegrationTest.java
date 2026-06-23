@@ -4,6 +4,7 @@ import com.charlesSchwab.event_gateway.dto.EventRequest;
 import com.charlesSchwab.event_gateway.model.TransactionType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,10 @@ class AccountServiceResiliencyIntegrationTest {
         if (!wireMock.isRunning()) {
             wireMock.start();
         }
+        // The static stubFor/verify helpers below talk to whatever port WireMock.configureFor
+        // points them at -- by default that's localhost:8080, NOT this server's dynamic port.
+        // Without this, stubFor() silently calls a different (possibly nonexistent) server.
+        WireMock.configureFor(wireMock.port());
         registry.add("account-service.url", wireMock::baseUrl);
 
         // Keep retries deterministic for request-count assertions.
@@ -95,6 +100,3 @@ class AccountServiceResiliencyIntegrationTest {
         return restTemplate.postForEntity("/events", body, String.class);
     }
 }
-
-
-

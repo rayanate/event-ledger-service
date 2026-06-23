@@ -124,6 +124,86 @@ class EventControllerWebMvcTest {
                 .andExpect(jsonPath("$[1].eventId").value("evt-2"));
     }
 
+    @Test
+    void submitWithMissingRequiredFieldReturnsBadRequest() throws Exception {
+        // accountId is missing entirely
+        String body = """
+                {
+                  "eventId": "evt-missing-field",
+                  "type": "CREDIT",
+                  "amount": 15.00,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
+    }
+
+    @Test
+    void submitWithZeroAmountReturnsBadRequest() throws Exception {
+        String body = """
+                {
+                  "eventId": "evt-zero-amount",
+                  "accountId": "acct-123",
+                  "type": "CREDIT",
+                  "amount": 0,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
+    }
+
+    @Test
+    void submitWithNegativeAmountReturnsBadRequest() throws Exception {
+        String body = """
+                {
+                  "eventId": "evt-negative-amount",
+                  "accountId": "acct-123",
+                  "type": "DEBIT",
+                  "amount": -5.00,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
+    }
+
+    @Test
+    void submitWithUnknownTransactionTypeReturnsBadRequest() throws Exception {
+        String body = """
+                {
+                  "eventId": "evt-bad-type",
+                  "accountId": "acct-123",
+                  "type": "TRANSFER",
+                  "amount": 15.00,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_TRANSACTION_TYPE"));
+    }
+
     private static EventRecord sampleEvent(String id, String accountId, Instant ts) {
         EventRecord e = new EventRecord();
         e.setEventId(id);

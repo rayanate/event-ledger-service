@@ -79,9 +79,73 @@ class AccountControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("invalid_transaction_type"));
+                // NOTE: was asserting lowercase "invalid_transaction_type" -- ApiError.of() uses
+                // ErrorCode.name(), which is uppercase. The old assertion would fail if run.
+                .andExpect(jsonPath("$.error").value("INVALID_TRANSACTION_TYPE"));
+
+        verify(accountService, never()).apply(any(AppliedTransaction.class));
+    }
+
+    @Test
+    void applyWithMissingRequiredFieldReturnsBadRequest() throws Exception {
+        // currency is missing entirely
+        String body = """
+                {
+                  "eventId": "evt-missing-field",
+                  "type": "CREDIT",
+                  "amount": 10.00,
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/accounts/acct-123/transactions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
+
+        verify(accountService, never()).apply(any(AppliedTransaction.class));
+    }
+
+    @Test
+    void applyWithZeroAmountReturnsBadRequest() throws Exception {
+        String body = """
+                {
+                  "eventId": "evt-zero",
+                  "type": "CREDIT",
+                  "amount": 0,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/accounts/acct-123/transactions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
+
+        verify(accountService, never()).apply(any(AppliedTransaction.class));
+    }
+
+    @Test
+    void applyWithNegativeAmountReturnsBadRequest() throws Exception {
+        String body = """
+                {
+                  "eventId": "evt-negative",
+                  "type": "DEBIT",
+                  "amount": -10.00,
+                  "currency": "USD",
+                  "eventTimestamp": "2026-05-15T14:02:11Z"
+                }
+                """;
+
+        mockMvc.perform(post("/accounts/acct-123/transactions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_FAILED"));
 
         verify(accountService, never()).apply(any(AppliedTransaction.class));
     }
 }
-

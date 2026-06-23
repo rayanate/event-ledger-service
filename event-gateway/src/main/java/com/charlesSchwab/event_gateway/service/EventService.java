@@ -7,6 +7,7 @@ import com.charlesSchwab.event_gateway.model.TransactionRequest;
 import com.charlesSchwab.event_gateway.repository.EventRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class EventService {
     }
 
     public EventResult submit(EventRecord event) {
-        // 1. Idempotency short-circuit — replay returns existing, no Account Service call
+        // 1. Idempotency short-circuit -- replay returns existing, no Account Service call
         Optional<EventRecord> existing = repo.findById(event.getEventId());
         if (existing.isPresent()) {
             log.info("event.replay eventId={} accountId={}", event.getEventId(), event.getAccountId());
@@ -35,10 +36,20 @@ public class EventService {
         log.info("event.submit.start eventId={} accountId={} type={} amount={}",
                 event.getEventId(), event.getAccountId(), event.getType(), event.getAmount());
         accountClient.applyTransaction(event.getAccountId(), toTransactionRequest(event));
-        // 3. Only persist after a successful apply
-        EventRecord saved = repo.save(event);
-        log.info("event.submit.ok eventId={} accountId={}", saved.getEventId(), saved.getAccountId());
-        return new EventResult(saved, true); // true = created
+        // 3. Only persist after a successful apply. The findById check above isn't atomic
+        // with this save, so two truly concurrent requests for the same eventId can both
+        // pass the check and both reach the account service (which is itself idempotent --
+        // see AccountService.apply). Catch the PK violation here the same way, so the
+        // loser of the race still gets a clean replay response instead of a 500.
+        try {
+            EventRecord saved = repo.save(event);
+            log.info("event.submit.ok eventId={} accountId={}", saved.getEventId(), saved.getAccountId());
+            return new EventResult(saved, true); // true = created
+        } catch (DataIntegrityViolationException e) {
+            log.warn("event.concurrent_duplicate eventId={} accountId={}",
+                    event.getEventId(), event.getAccountId());
+            return new EventResult(repo.findById(event.getEventId()).orElseThrow(), false);
+        }
     }
 
     public EventRecord getById(String eventId) {
