@@ -1,0 +1,690 @@
+{
+  "info": {
+    "_postman_id": "cce3fceb-3da0-4e24-bdb1-cbc61bb0fc70",
+    "name": "CharlesSchwab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51131347",
+    "_collection_link": "https://go.postman.co/collection/51131347-cce3fceb-3da0-4e24-bdb1-cbc61bb0fc70?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "AccountService",
+      "item": [
+        {
+          "name": "Validation Scenarios",
+          "item": [
+            {
+              "name": "Unknown Enum Type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"eventId\": \"bad1\",\r\n    \"type\": \"TRANSFER\",\r\n    \"amount\": 10,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:02:11Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8081/accounts/acct-123/transactions",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "accounts",
+                    "acct-123",
+                    "transactions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Crediting 0$ to the account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"eventId\": \"bad2\",\r\n    \"type\": \"CREDIT\",\r\n    \"amount\": 0,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:02:11Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8081/accounts/acct-123/transactions",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "accounts",
+                    "acct-123",
+                    "transactions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Crediting -ve amount to the account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"eventId\": \"bad3\",\r\n    \"type\": \"DEBIT\",\r\n    \"amount\": -5,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:02:11Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8081/accounts/acct-123/transactions",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "accounts",
+                    "acct-123",
+                    "transactions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Missing Amount",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"eventId\": \"bad4\",\r\n    \"type\": \"CREDIT\",\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:02:11Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8081/accounts/acct-123/transactions",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "accounts",
+                    "acct-123",
+                    "transactions"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8081/health",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Credit to an account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"eventId\": \"evt-001\",\r\n    \"type\": \"CREDIT\",\r\n    \"amount\": 150.00,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:02:11Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8081/accounts/acct-123/transactions",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-123",
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Debit on an account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"eventId\": \"evt-002\",\r\n    \"type\": \"DEBIT\",\r\n    \"amount\": 40.00,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T14:05:00Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8081/accounts/acct-123/transactions",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-123",
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8081/accounts/acct-123/balance",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-123",
+                "balance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Idempotency",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"eventId\":\"evt-001\",\"type\":\"CREDIT\",\"amount\":150.00,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T14:02:11Z\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8081/accounts/acct-123/transactions",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-123",
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Account Details and Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8081/accounts/acct-123",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-123"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Event Gateway",
+      "item": [
+        {
+          "name": "Validations",
+          "item": [
+            {
+              "name": "Unknown transaction type",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"eventId\": \"bad1\",\r\n    \"accountId\": \"acct-900\",\r\n    \"type\": \"TRANSFER\",\r\n    \"amount\": 10,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T10:00:00Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Zero Amount",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            },
+            {
+              "name": "-ve Amount",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"eventId\":\"bad3\",\"accountId\":\"acct-900\",\"type\":\"DEBIT\",\"amount\":-5,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Missing Amount",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"eventId\":\"bad4\",\"accountId\":\"acct-900\",\"type\":\"CREDIT\",\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "MissingAccount",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"eventId\":\"bad5\",\"type\":\"CREDIT\",\"amount\":10,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8080/events",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "events"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Account Service Down Check",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/health",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Returns empty list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/events?account=acct-900",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "acct-900"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event Not Found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/events/nope",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events",
+                "nope"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crediting an Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"eventId\": \"evt-100\",\r\n    \"accountId\": \"acct-900\",\r\n    \"type\": \"CREDIT\",\r\n    \"amount\": 50.00,\r\n    \"currency\": \"USD\",\r\n    \"eventTimestamp\": \"2026-05-15T09:00:00Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/events",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Debiting an Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"eventId\":\"evt-102\",\"accountId\":\"acct-900\",\"type\":\"DEBIT\",\"amount\":75.00,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:30:00Z\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/events",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get an Event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/events/evt-101",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events",
+                "evt-101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8081/accounts/acct-900/balance",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "accounts",
+                "acct-900",
+                "balance"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"eventId\":\"evt-101\",\"accountId\":\"acct-900\",\"type\":\"CREDIT\",\"amount\":200.00,\"currency\":\"USD\",\"eventTimestamp\":\"2026-05-15T10:00:00Z\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/events",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Events by Account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:8080/events?account=acct-900",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "acct-900"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
