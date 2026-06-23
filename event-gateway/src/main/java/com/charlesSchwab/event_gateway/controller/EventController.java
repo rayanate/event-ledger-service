@@ -2,10 +2,13 @@ package com.charlesSchwab.event_gateway.controller;
 
 import com.charlesSchwab.event_gateway.dto.EventRequest;
 import com.charlesSchwab.event_gateway.entity.EventRecord;
+import com.charlesSchwab.event_gateway.exception.RateLimitExceededException;
 import com.charlesSchwab.event_gateway.service.EventResult;
 import com.charlesSchwab.event_gateway.service.EventService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +36,22 @@ public class EventController {
     }
 
     @PostMapping
+    @RateLimiter(name = "eventSubmission", fallbackMethod = "submitRateLimited")
     public ResponseEntity<EventRecord> submit(@Valid @RequestBody EventRequest req) {
         EventResult result = eventService.submit(toEventRecord(req));
         HttpStatus status = result.created() ? HttpStatus.CREATED : HttpStatus.OK; // 201 new, 200 replay
         return ResponseEntity.status(status).body(result.event());
+    }
+
+    @SuppressWarnings("unused")
+    private ResponseEntity<EventRecord> submitRateLimited(EventRequest req, Throwable throwable) {
+        if (throwable instanceof RequestNotPermitted) {
+            throw new RateLimitExceededException("Rate limit exceeded for event submission", throwable);
+        }
+        if (throwable instanceof RuntimeException runtimeException) {
+            throw runtimeException;
+        }
+        throw new RuntimeException(throwable);
     }
 
     @GetMapping("/{eventId}")

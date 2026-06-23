@@ -63,6 +63,15 @@ public class ApiExceptionHandler {
                         "Account Service is currently unavailable"));
     }
 
+    @ExceptionHandler(RateLimitExceededException.class)
+    public ResponseEntity<ApiError> onRateLimitExceeded(RateLimitExceededException e) {
+        log.error("rate_limit.exceeded error={}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(ApiError.of(HttpStatus.TOO_MANY_REQUESTS,
+                        ErrorCode.RATE_LIMIT_EXCEEDED,
+                        "Too many event submissions. Please retry later."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> onUnexpected(Exception e) {
         log.error("unhandled_exception error={}", e.getMessage(), e);

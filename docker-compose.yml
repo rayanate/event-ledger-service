@@ -3,6 +3,8 @@ services:
     build:
       context: ./account-service
     container_name: account-service
+    environment:
+      OTLP_TRACING_ENDPOINT: http://jaeger:4318/v1/traces
     ports:
       - "8081:8081"
     healthcheck:
@@ -12,6 +14,15 @@ services:
       retries: 10
       start_period: 10s
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+
   event-gateway:
     build:
       context: ./event-gateway
@@ -19,8 +30,11 @@ services:
     depends_on:
       account-service:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     environment:
       ACCOUNT_SERVICE_URL: http://account-service:8081
+      OTLP_TRACING_ENDPOINT: http://jaeger:4318/v1/traces
     ports:
       - "8080:8080"
     healthcheck:
