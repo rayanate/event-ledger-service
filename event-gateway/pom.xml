@@ -40,6 +40,63 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Web + persistence + validation + health/metrics -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Tracing: traceId in logs + W3C traceparent propagation -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bridge-otel</artifactId>
+		</dependency>
+
+		<!-- Structured JSON logging -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>9.0</version>
+		</dependency>
+
+		<!-- Circuit breaker + time limiter + retry -->
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-spring-boot3</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<!-- Required for Resilience4j annotations to work (AOP proxies) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+
+		<!-- Simulate the Account Service in tests (failures, header capture) -->
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock</artifactId>
+			<version>3.13.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
