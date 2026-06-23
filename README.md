@@ -87,10 +87,12 @@ docker compose down
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/events` | Submit an event. Returns `201` (new) or `200` (replay). |
+| `POST` | `/events` | Submit an event. Returns `201` (new), `200` (replay), or `429` (rate limited; max 5 req/s). |
 | `GET` | `/events/{id}` | Fetch a single event by id. `404` if not found. |
 | `GET` | `/events?account={accountId}` | List events for an account, sorted by `eventTimestamp`. |
 | `GET` | `/health` | Liveness/health check. |
+| `GET` | `/metrics` | Actuator metrics endpoint. |
+| `GET` | `/prometheus` | Prometheus scrape endpoint. |
 
 ### Account Service (`account-service`)
 
@@ -100,6 +102,8 @@ docker compose down
 | `GET` | `/accounts/{accountId}/balance` | Current balance. |
 | `GET` | `/accounts/{accountId}` | Account details + transactions. |
 | `GET` | `/health` | Liveness/health check. |
+| `GET` | `/metrics` | Actuator metrics endpoint. |
+| `GET` | `/prometheus` | Prometheus scrape endpoint. |
 
 ### Example: submit an event
 
@@ -142,8 +146,16 @@ Notable test coverage:
 
 - Structured JSON logging is configured in both services (Logback + Logstash encoder).
 - Distributed trace IDs are propagated from gateway to account service via an `X-Trace-Id` header, set from the current span's trace ID.
-- Actuator endpoints expose `health` and `metrics` (`/health`, `/metrics`).
+- Actuator management base path is `/`, so metrics endpoints are at `/metrics` and `/prometheus`.
 - Custom gateway metrics:
   - `gateway.account.apply.success`
   - `gateway.account.apply.failure`
   - `gateway.account.apply.circuit_open`
+- Tracing is exported over OTLP HTTP using `management.otlp.tracing.endpoint` (defaults to `http://localhost:4318/v1/traces`).
+- In Docker Compose, traces are sent to Jaeger (`jaeger:4318`), and the Jaeger UI is available at `http://localhost:16686`.
+
+## Resilience Notes
+
+- `POST /events` is rate-limited with Resilience4j (`eventSubmission`): `limit-for-period=5`, `limit-refresh-period=1s`, `timeout-duration=0` (fail-fast).
+- Exceeding the rate limit returns `429 Too Many Requests` with error code `RATE_LIMIT_EXCEEDED`.
+- Downstream account-service retry uses exponential backoff + jitter (`max-attempts=2`, `wait-duration=200ms`, multiplier `2`, randomized wait factor `0.5`).
