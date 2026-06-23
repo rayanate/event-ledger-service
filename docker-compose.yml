@@ -5,15 +5,21 @@ services:
     container_name: account-service
     ports:
       - "8081:8081"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
   event-gateway:
     build:
       context: ./event-gateway
     container_name: event-gateway
     depends_on:
-      - account-service
+      account-service:
+        condition: service_healthy
     environment:
       ACCOUNT_SERVICE_URL: http://account-service:8081
     ports:
       - "8080:8080"
-

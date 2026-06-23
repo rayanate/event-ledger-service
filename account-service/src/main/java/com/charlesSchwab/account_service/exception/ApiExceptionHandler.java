@@ -25,7 +25,7 @@ public class ApiExceptionHandler {
                 .toList();
         log.warn("validation.failed fields={}", details);
         return ResponseEntity.badRequest()
-                .body(ApiError.of(HttpStatus.BAD_REQUEST, "validation_failed", details));
+                .body(ApiError.of(HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_FAILED, details));
     }
 
     // Malformed JSON, or an unknown enum like type="TRANSFER" -> 400 (not 500)
@@ -36,12 +36,12 @@ public class ApiExceptionHandler {
             String allowed = Arrays.toString(TransactionType.values());
             log.warn("invalid_transaction_type value={} allowed={}", ife.getValue(), allowed);
             return ResponseEntity.badRequest()
-                    .body(ApiError.of(HttpStatus.BAD_REQUEST, "invalid_transaction_type",
+                    .body(ApiError.of(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_TRANSACTION_TYPE,
                             "type must be one of " + allowed));
         }
         log.warn("malformed_request error={}", e.getMessage());
         return ResponseEntity.badRequest()
-                .body(ApiError.of(HttpStatus.BAD_REQUEST, "malformed_request", "Unreadable or invalid request body"));
+                .body(ApiError.of(HttpStatus.BAD_REQUEST, ErrorCode.MALFORMED_REQUEST, "Unreadable or invalid request body"));
     }
 
     // Anything unexpected -> clean 500 instead of the Whitelabel page
@@ -49,7 +49,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ApiError> onUnexpected(Exception e) {
         log.error("unhandled_exception error={}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiError.of(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", e.getMessage()));
+                .body(ApiError.of(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_ERROR, e.getMessage()));
     }
 
     @ExceptionHandler(InvalidTransactionTypeException.class)
@@ -57,7 +57,7 @@ public class ApiExceptionHandler {
         String allowed = Arrays.toString(TransactionType.values());
         log.warn("invalid_transaction_type value={} allowed={}", e.getValue(), allowed);
         return ResponseEntity.badRequest()
-                .body(ApiError.of(HttpStatus.BAD_REQUEST, "invalid_transaction_type",
+                .body(ApiError.of(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_TRANSACTION_TYPE,
                         "type must be one of " + allowed));
     }
 
