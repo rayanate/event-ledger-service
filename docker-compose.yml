@@ -1,0 +1,19 @@
+services:
+  account-service:
+    build:
+      context: ./account-service
+    container_name: account-service
+    ports:
+      - "8081:8081"
+
+  event-gateway:
+    build:
+      context: ./event-gateway
+    container_name: event-gateway
+    depends_on:
+      - account-service
+    environment:
+      ACCOUNT_SERVICE_URL: http://account-service:8081
+    ports:
+      - "8080:8080"
+
