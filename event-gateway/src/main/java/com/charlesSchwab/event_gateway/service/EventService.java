@@ -1,9 +1,9 @@
 package com.charlesSchwab.event_gateway.service;
 
-import com.charlesSchwab.account_service.dto.TransactionRequest;
 import com.charlesSchwab.event_gateway.client.AccountClient;
 import com.charlesSchwab.event_gateway.entity.EventRecord;
 import com.charlesSchwab.event_gateway.exception.EventNotFoundException;
+import com.charlesSchwab.event_gateway.model.TransactionRequest;
 import com.charlesSchwab.event_gateway.repository.EventRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

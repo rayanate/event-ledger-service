@@ -1,6 +1,6 @@
 package com.charlesSchwab.event_gateway.entity;
 
-import com.charlesSchwab.account_service.enums.TransactionType;
+import com.charlesSchwab.event_gateway.model.TransactionType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

@@ -52,6 +52,15 @@ public class ApiExceptionHandler {
                 .body(ApiError.of(HttpStatus.INTERNAL_SERVER_ERROR, "internal_error", e.getMessage()));
     }
 
+    @ExceptionHandler(InvalidTransactionTypeException.class)
+    public ResponseEntity<ApiError> onInvalidTransactionType(InvalidTransactionTypeException e) {
+        String allowed = Arrays.toString(TransactionType.values());
+        log.warn("invalid_transaction_type value={} allowed={}", e.getValue(), allowed);
+        return ResponseEntity.badRequest()
+                .body(ApiError.of(HttpStatus.BAD_REQUEST, "invalid_transaction_type",
+                        "type must be one of " + allowed));
+    }
+
     private static <T extends Throwable> T findCause(Throwable ex, Class<T> type) {
         Throwable current = ex;
         while (current != null) {

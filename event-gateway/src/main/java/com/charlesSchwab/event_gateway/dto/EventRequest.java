@@ -1,6 +1,6 @@
 package com.charlesSchwab.event_gateway.dto;
 
-import com.charlesSchwab.account_service.enums.TransactionType;
+import com.charlesSchwab.event_gateway.model.TransactionType;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

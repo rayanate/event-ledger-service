@@ -2,6 +2,8 @@ package com.charlesSchwab.account_service.controller;
 
 import com.charlesSchwab.account_service.dto.TransactionRequest;
 import com.charlesSchwab.account_service.entity.AppliedTransaction;
+import com.charlesSchwab.account_service.enums.TransactionType;
+import com.charlesSchwab.account_service.exception.InvalidTransactionTypeException;
 import com.charlesSchwab.account_service.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,7 @@ public class AccountController {
         var txn = new AppliedTransaction(); // map fields from req + accountId
         txn.setEventId(req.eventId());
         txn.setAccountId(accountId);
-        txn.setType(req.type());
+        txn.setType(parseType(req.type()));
         txn.setAmount(req.amount());
         txn.setCurrency(req.currency());
         txn.setEventTimestamp(req.eventTimestamp());
@@ -40,5 +42,13 @@ public class AccountController {
                 "accountId", accountId,
                 "balance", service.balance(accountId),
                 "transactions", service.transactions(accountId));
+    }
+
+    private TransactionType parseType(String rawType) {
+        try {
+            return TransactionType.valueOf(rawType.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidTransactionTypeException(rawType);
+        }
     }
 }
